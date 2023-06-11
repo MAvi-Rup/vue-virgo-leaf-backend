@@ -76,6 +76,15 @@ async function run() {
       res.send(result);
     });
 
+    //Get Transport Permit by ID
+
+    app.get('/transport-permit/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }; // Use 'new' keyword to create an instance of ObjectId
+      const transportPermit = await tpCollection.findOne(query);
+      res.send(transportPermit);
+    });
+
   }
   finally {
 
