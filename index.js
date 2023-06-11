@@ -22,44 +22,58 @@ async function run() {
     const tpCollection = client.db('virgo-leaf-database').collection('transport-permit-collection');
     const farmerCollection = client.db('virgo-leaf-database').collection('farmer-collection');
     // const tpCollection = client.db('agro_trace').collection('tp_collection');
-  
-    
+
+
     //get all Farmers
     app.get('/farmers', async (req, res) => {
       const farmers = await farmerCollection.find().toArray();
       res.send(farmers);
     });
+
+    // Save all the register farmers.
+    app.post('/farmers', async (req, res) => {
+      try {
+        const farmers = req.body;
+
+        // Get the current count of documents in the collection
+        const count = await farmerCollection.countDocuments();
+
+        // Generate the next ID by incrementing the count by 1
+        const nextId = count + 1;
+
+        // Add the incremental ID to the farmers data
+        const farmersWithId = {
+          id: nextId,
+          ...farmers,
+        };
+
+        const result = await farmerCollection.insertOne(farmersWithId);
+        res.send(result);
+      } catch (error) {
+        console.error('Error inserting farmers:', error);
+        res.status(500).send('An error occurred');
+      }
+    });
+
+    app.get('/farmer/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }; // Use 'new' keyword to create an instance of ObjectId
+      const farmer = await farmerCollection.findOne(query);
+      res.send(farmer);
+    });
+
+
     //get all Transport Permit
     app.get('/all-transport-permit', async (req, res) => {
       const transportPermit = await tpCollection.find().toArray();
       res.send(transportPermit);
     });
-    
-    // Save all the register farmers.
-    app.post('/farmers', async (req, res) => {
-      const farmers = req.body;
-      const result = await farmerCollection.insertOne(farmers);
-      res.send(result);
-    });
+
     // Save all the transport Permit.
     app.post('/transport-permit', async (req, res) => {
       const transportPermit = req.body;
       const result = await tpCollection.insertOne(transportPermit);
       res.send(result);
-    });
-
-    app.post('/api/upload', async (req, res) => {
-      try {
-        const response = await axios.post('https://api.imgbb.com/1/upload', req.body, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-    
-        res.json(response.data);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
     });
 
   }
