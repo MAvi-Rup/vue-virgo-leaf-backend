@@ -21,6 +21,7 @@ async function run() {
     await client.connect();
     const tpCollection = client.db('virgo-leaf-database').collection('transport-permit-collection');
     const farmerCollection = client.db('virgo-leaf-database').collection('farmer-collection');
+    const agroProductCollection = client.db('virgo-leaf-database').collection('agro-product');
     // const tpCollection = client.db('agro_trace').collection('tp_collection');
 
 
@@ -29,6 +30,53 @@ async function run() {
       const farmers = await farmerCollection.find().toArray();
       res.send(farmers);
     });
+
+    //get all agro products
+    app.get('/products', async (req, res) => {
+      const products = await agroProductCollection.find().toArray();
+      res.send(products);
+    });
+
+    // Add a new product
+    app.post('/products', async (req, res) => {
+      const newProduct = req.body; // Assuming the new product object is sent in the request body
+
+      try {
+        const result = await agroProductCollection.insertOne(newProduct);
+        const addedProduct = result.ops[0]; // Get the added product from the result
+
+        res.json(addedProduct); // Send the added product as a JSON response
+      } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' }); // Send an error response as JSON
+      }
+    });
+
+    app.delete('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await agroProductCollection.deleteOne(query)
+      res.send(result)
+  })
+
+   
+
+    app.put('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const updatedUser = req.body;
+      // console.log(updatedUser)
+      const filter = { _id: new ObjectId(id) } // Add the 'new' keyword here
+      const options = { upsert: true }
+      const updateProduct = {
+        $set: {
+          name: updatedUser.updateName,
+          price: updatedUser.updatePrice
+        }
+      };
+
+      const result = await agroProductCollection.updateOne(filter, updateProduct, options);
+      res.send(result);
+    });
+
 
     // Save all the register farmers.
     app.post('/farmers', async (req, res) => {
@@ -102,7 +150,4 @@ app.listen(port, () => {
   console.log(`Virgo Tobaco website listening on port ${port}`)
 })
 
-// app.use((req, res, next) => {
-//   res.setHeader('Content-Security-Policy', "default-src 'self' https://vercel.live");
-//   next();
-// });
+
