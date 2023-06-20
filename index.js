@@ -56,9 +56,9 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await agroProductCollection.deleteOne(query)
       res.send(result)
-  })
+    })
 
-   
+
 
     app.put('/products/:id', async (req, res) => {
       const id = req.params.id;
@@ -114,7 +114,8 @@ async function run() {
     //get all Transport Permit
     app.get('/all-transport-permit', async (req, res) => {
       const transportPermit = await tpCollection.find().toArray();
-      res.send(transportPermit);
+      const reverseTp = transportPermit.reverse()
+      res.send(reverseTp);
     });
 
     // Save all the transport Permit.
@@ -132,6 +133,9 @@ async function run() {
       const transportPermit = await tpCollection.findOne(query);
       res.send(transportPermit);
     });
+ 
+   
+
 
   }
   finally {
