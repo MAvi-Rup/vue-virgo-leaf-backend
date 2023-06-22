@@ -150,9 +150,6 @@ async function run() {
       const result = await tpCollection.updateOne(filter, updateProduct, options);
       res.send(result);
     });
- 
-   
-
 
   }
   finally {
