@@ -137,19 +137,40 @@ async function run() {
     app.put('/transport-permit/:id', async (req, res) => {
       const id = req.params.id;
       const updatedUser = req.body;
-      // console.log(updatedUser)
-      const filter = { _id: new ObjectId(id) } // Add the 'new' keyword here
-      const options = { upsert: true }
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
       const updateProduct = {
-        $set: {
-          total: updatedUser?.total,
-          weight: updatedUser?.weight
-        }
+        $set: {}
       };
-
+    
+      if (updatedUser.total !== undefined) {
+        updateProduct.$set.total = updatedUser.total;
+      }
+    
+      if (updatedUser.weight !== undefined) {
+        updateProduct.$set.weight = updatedUser.weight;
+      }
+    
       const result = await tpCollection.updateOne(filter, updateProduct, options);
       res.send(result);
     });
+
+    // app.put('/transport-permit/loan/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const updatedUser = req.body;
+    //   // console.log(updatedUser)
+    //   const filter = { _id: new ObjectId(id) } // Add the 'new' keyword here
+    //   const options = { upsert: true }
+    //   const updateProduct = {
+    //     $set: {
+    //       total: updatedUser.total,
+    //     }
+    //   };
+
+    //   const result = await tpCollection.updateOne(filter, updateProduct, options);
+    //   res.send(result);
+    // });
+    
 
   }
   finally {
