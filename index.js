@@ -154,22 +154,6 @@ async function run() {
       const result = await tpCollection.updateOne(filter, updateProduct, options);
       res.send(result);
     });
-
-    // app.put('/transport-permit/loan/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const updatedUser = req.body;
-    //   // console.log(updatedUser)
-    //   const filter = { _id: new ObjectId(id) } // Add the 'new' keyword here
-    //   const options = { upsert: true }
-    //   const updateProduct = {
-    //     $set: {
-    //       total: updatedUser.total,
-    //     }
-    //   };
-
-    //   const result = await tpCollection.updateOne(filter, updateProduct, options);
-    //   res.send(result);
-    // });
     
 
   }
