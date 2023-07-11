@@ -134,26 +134,56 @@ async function run() {
       res.send(transportPermit);
     });
 
+    // app.put('/transport-permit/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const updatedUser = req.body;
+    //   const filter = { _id: new ObjectId(id) };
+    //   const options = { upsert: true };
+    //   const updateProduct = {
+    //     $set: {}
+    //   };
+    
+    //   if (updatedUser.total !== undefined) {
+    //     updateProduct.$set.total = updatedUser.total;
+    //   }
+    
+    //   if (updatedUser.weight !== undefined) {
+    //     updateProduct.$set.weight = updatedUser.weight;
+    //   }
+    
+    //   const result = await tpCollection.updateOne(filter, updateProduct, options);
+    //   res.send(result);
+    // });
+
     app.put('/transport-permit/:id', async (req, res) => {
       const id = req.params.id;
-      const updatedUser = req.body;
+      const updatedData = req.body;
       const filter = { _id: new ObjectId(id) };
-      const options = { upsert: true };
-      const updateProduct = {
-        $set: {}
-      };
+      const update = { $set: updatedData };
     
-      if (updatedUser.total !== undefined) {
-        updateProduct.$set.total = updatedUser.total;
+      try {
+        const result = await tpCollection.updateOne(filter, update);
+        res.send(result);
+      } catch (error) {
+        console.error('Error updating transport permit:', error);
+        res.status(500).send('An error occurred');
       }
-    
-      if (updatedUser.weight !== undefined) {
-        updateProduct.$set.weight = updatedUser.weight;
-      }
-    
-      const result = await tpCollection.updateOne(filter, updateProduct, options);
-      res.send(result);
     });
+
+    app.delete('/transport-permit/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+    
+      try {
+        const result = await tpCollection.deleteOne(filter);
+        res.send(result);
+      } catch (error) {
+        console.error('Error deleting transport permit:', error);
+        res.status(500).send('An error occurred');
+      }
+    });
+    
+    
     
 
   }
