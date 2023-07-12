@@ -134,27 +134,6 @@ async function run() {
       res.send(transportPermit);
     });
 
-    // app.put('/transport-permit/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const updatedUser = req.body;
-    //   const filter = { _id: new ObjectId(id) };
-    //   const options = { upsert: true };
-    //   const updateProduct = {
-    //     $set: {}
-    //   };
-    
-    //   if (updatedUser.total !== undefined) {
-    //     updateProduct.$set.total = updatedUser.total;
-    //   }
-    
-    //   if (updatedUser.weight !== undefined) {
-    //     updateProduct.$set.weight = updatedUser.weight;
-    //   }
-    
-    //   const result = await tpCollection.updateOne(filter, updateProduct, options);
-    //   res.send(result);
-    // });
-
     app.put('/transport-permit/:id', async (req, res) => {
       const id = req.params.id;
       const updatedData = req.body;
