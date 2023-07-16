@@ -161,6 +161,28 @@ async function run() {
         res.status(500).send('An error occurred');
       }
     });
+
+    app.get('/total-loan', async (req, res) => {
+      try {
+        const pipeline = [
+          {
+            $group: {
+              _id: null,
+              totalLoan: { $sum: '$total' }
+            }
+          }
+        ];
+    
+        const result = await tpCollection.aggregate(pipeline).toArray();
+        const totalLoan = result[0].totalLoan;
+    
+        res.json({ totalLoan });
+      } catch (error) {
+        console.error('Error calculating total loan:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+    
     
     
     
