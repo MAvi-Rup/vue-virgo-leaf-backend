@@ -182,6 +182,27 @@ async function run() {
         res.status(500).json({ error: 'Internal Server Error' });
       }
     });
+    app.get('/transport-permits-with-total', async (req, res) => {
+      try {
+        const query = { total: { $exists: true } }; // Query to find documents with the "total" field
+        const transportPermitsWithTotal = await tpCollection.find(query).toArray();
+        res.json(transportPermitsWithTotal);
+      } catch (error) {
+        console.error('Error fetching TransportPermits with "total" field:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+
+    app.get('/total-transport-permits', async (req, res) => {
+      try {
+        const query = { total: { $exists: true } }; // Query to find documents with the "total" field
+        const totalTransportPermits = await tpCollection.countDocuments(query);
+        res.json({ totalTransportPermits });
+      } catch (error) {
+        console.error('Error fetching total TransportPermits with "total" field:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
     
     
     
