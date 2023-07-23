@@ -193,7 +193,7 @@ async function run() {
       }
     });
 
-    app.get('/total-transport-permits', async (req, res) => {
+    app.get('/total-loan-sanction', async (req, res) => {
       try {
         const query = { total: { $exists: true } }; // Query to find documents with the "total" field
         const totalTransportPermits = await tpCollection.countDocuments(query);
@@ -221,7 +221,7 @@ app.get('/', (req, res) => {
   res.send('Hello From Virgo Tobaco Leaf')
 })
 
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
   console.log(`Virgo Tobaco website listening on port ${port}`)
 })
 
