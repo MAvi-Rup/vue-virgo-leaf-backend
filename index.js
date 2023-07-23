@@ -39,18 +39,12 @@ async function run() {
 
     // Add a new product
     app.post('/products', async (req, res) => {
-      const newProduct = req.body; // Assuming the new product object is sent in the request body
-
-      try {
-        const result = await agroProductCollection.insertOne(newProduct);
-        const addedProduct = result.ops[0]; // Get the added product from the result
-
-        res.json(addedProduct); // Send the added product as a JSON response
-      } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' }); // Send an error response as JSON
-      }
+      const transportPermit = req.body;
+      const result = await agroProductCollection.insertOne(transportPermit);
+      res.send(result);
     });
-
+    
+    //delete a product
     app.delete('/products/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
