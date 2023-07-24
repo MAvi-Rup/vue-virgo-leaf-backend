@@ -43,7 +43,7 @@ async function run() {
       const result = await agroProductCollection.insertOne(transportPermit);
       res.send(result);
     });
-    
+
     //delete a product
     app.delete('/products/:id', async (req, res) => {
       const id = req.params.id;
@@ -113,11 +113,40 @@ async function run() {
     });
 
     // Save all the transport Permit.
+    // app.post('/transport-permit', async (req, res) => {
+    //   const transportPermit = req.body;
+    //   const result = await tpCollection.insertOne(transportPermit);
+    //   res.send(result);
+    // });
+
     app.post('/transport-permit', async (req, res) => {
-      const transportPermit = req.body;
-      const result = await tpCollection.insertOne(transportPermit);
-      res.send(result);
+      try {
+        const transportPermit = req.body;
+
+        // Check if a transport permit with the same ID exists
+        const existingPermit = await tpCollection.findOne({ id: transportPermit.id });
+        if (existingPermit) {
+          // Send error message to frontend using toast
+          res.status(400).json({ error: 'Transport permit already exists for this ID.' });
+          return;
+        }
+
+        const result = await tpCollection.insertOne(transportPermit);
+        res.send(result);
+      } catch (error) {
+        console.error('Error saving transport permit:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
     });
+
+    // Add a new route to check if a transport permit with the same ID already exists
+    app.get('/transport-permit/exists/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { id: id }; // Search by ID in the collection
+      const existingPermit = await tpCollection.findOne(query);
+      res.send(existingPermit !== null); // Send true if a permit exists, false otherwise
+    });
+
 
     //Get Transport Permit by ID
 
@@ -133,7 +162,7 @@ async function run() {
       const updatedData = req.body;
       const filter = { _id: new ObjectId(id) };
       const update = { $set: updatedData };
-    
+
       try {
         const result = await tpCollection.updateOne(filter, update);
         res.send(result);
@@ -146,7 +175,7 @@ async function run() {
     app.delete('/transport-permit/:id', async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
-    
+
       try {
         const result = await tpCollection.deleteOne(filter);
         res.send(result);
@@ -166,10 +195,10 @@ async function run() {
             }
           }
         ];
-    
+
         const result = await tpCollection.aggregate(pipeline).toArray();
         const totalLoan = result[0].totalLoan;
-    
+
         res.json({ totalLoan });
       } catch (error) {
         console.error('Error calculating total loan:', error);
@@ -197,10 +226,10 @@ async function run() {
         res.status(500).json({ error: 'Internal Server Error' });
       }
     });
-    
-    
-    
-    
+
+
+
+
 
   }
   finally {
